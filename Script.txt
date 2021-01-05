@@ -1,0 +1,93 @@
+Sub stocks()
+
+    'define everything
+    Dim ticker As String
+    Dim total_stock_volume As Double
+    Dim open_price As Double
+    Dim close_price As Double
+    Dim yearly_change As Double
+    Dim percent_change As Double
+    Dim wscount As Integer
+    Dim Summary_Table_Row As Integer
+
+    'set headings
+    
+    wscount = ActiveWorkbook.Worksheets.Count
+    
+    For WS = 1 To wscount
+ 
+        
+        Worksheets(WS).Cells(1, 9).Value = "ticker"
+        Worksheets(WS).Cells(1, 10).Value = "yearly change"
+        Worksheets(WS).Cells(1, 11).Value = "percent change"
+        Worksheets(WS).Cells(1, 12).Value = "total stock volume"
+
+        'setup loop
+
+        Summary_Table_Row = 2
+        open_price = 0
+        
+  
+
+        For i = 2 To Worksheets(WS).Cells(Rows.Count, 1).End(xlUp).row
+            'setup ticker & stock vol
+            ticker = Worksheets(WS).Cells(i, 1)
+            total_stock_volume = total_stock_volume + Worksheets(WS).Cells(i, 7)
+
+            'set open price
+            If open_price = 0 Then
+                open_price = Worksheets(WS).Cells(i, 3)
+                
+            End If
+
+            If ticker <> Worksheets(WS).Cells((i + 1), 1) Then
+                'set close price
+                close_price = Worksheets(WS).Cells(i, 6)
+
+                'calc yearly change
+                yearly_change = close_price - open_price
+                
+                'ticker output
+                Worksheets(WS).Range("I" & Summary_Table_Row).Value = ticker
+
+                'yearly change output w format
+
+                Worksheets(WS).Range("J" & Summary_Table_Row).Value = yearly_change
+                
+
+                If yearly_change > 0 Then
+                    Worksheets(WS).Range("J" & Summary_Table_Row).Interior.ColorIndex = 4 'Green
+                Else
+                    Worksheets(WS).Range("J" & Summary_Table_Row).Interior.ColorIndex = 3 'Red
+                End If
+
+                'percent changed output with formatting
+
+                If open_price <> close_price Then
+
+                    percent_change = ((yearly_change / open_price) * 100)
+
+                Else
+
+                    percent_change = 0
+
+                End If
+
+                Worksheets(WS).Range("K" & Summary_Table_Row).Value = percent_change
+
+                'stock volume output
+
+                Worksheets(WS).Range("L" & Summary_Table_Row).Value = total_stock_volume
+                
+                Summary_Table_Row = Summary_Table_Row + 1
+                Totalstockvolume = 0
+                open_price = 0
+
+            End If
+
+        Next i
+     
+     
+    Next WS
+
+End Sub
